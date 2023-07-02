@@ -18,7 +18,7 @@ export default function NavBar() {
                         <a className="nav-link" href="/menu">Menu builder</a>
                     </li>
                     <li className="nav-item ms-auto">
-                        <a className="nav-link" href="#">Profile</a>
+                        <a className="nav-link" href="#">My account</a>
                     </li>
                 </ul>
             </div>

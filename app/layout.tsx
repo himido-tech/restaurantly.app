@@ -18,9 +18,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className}, ${page_layout.body}`}>
-        <NavBar />
-        {children}
+      <body className={`${inter.className}`}>
+        <div className="container">
+          <div className="row">
+            <div className="col-md"></div>
+            <NavBar />
+          </div>
+          <div className="row">
+            <div className="col-md">{children}</div>
+
+          </div>
+
+        </div>
       </body>
     </html>
   )
