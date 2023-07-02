@@ -9,7 +9,7 @@ export default function NavBar() {
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav">
                         <li className="nav-item active">
-                            <a className="nav-link" href="/">QR</a>
+                            <a className="nav-link" href="/qr">QR</a>
                         </li>
                         <li className="nav-item">
                             <a className="nav-link" href="/menu">Menu builder</a>
