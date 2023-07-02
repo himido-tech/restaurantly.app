@@ -26,13 +26,13 @@ export default function Menu() {
         <label>Description</label>
         <div className="form-group">
           {/* include validation with required or other standard HTML validation rules */}
-          <textarea className="w-100"{...register("exampleRequired", { required: true })} placeholder="For example: 
+          <textarea className="w-50"{...register("exampleRequired", { required: true })} placeholder="For example: 
           Choose from top-rated comfort food, healthy, and vegetarian options. Find your meal now!" />
           {/* errors will return when field validation fails  */}
           {errors.exampleRequired && <span>This field is required</span>}
         </div>
 
-        <input type="submit" className="btn btn-primary" />
+        <button type="submit" className="btn btn-primary">Add</button>
       </form>
     </main>
   );
