@@ -1,6 +1,6 @@
 'use client'
-
 import { useForm, SubmitHandler } from "react-hook-form";
+import NewSection from '../components/menu/AddSection';
 
 type Inputs = {
   category: string,
@@ -14,6 +14,7 @@ export default function Menu() {
   return (
     /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
     <main>
+      <NewSection />
       <h1>Menu</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="d-grid gap-2">
