@@ -1,6 +1,6 @@
 'use client'
 import { useForm, SubmitHandler } from "react-hook-form";
-import NewSection from '../components/menu/AddSection';
+import NewSection from '../../components/menu/AddSection';
 
 type Inputs = {
   category: string,
