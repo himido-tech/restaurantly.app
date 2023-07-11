@@ -1,3 +1,5 @@
+import { LoginButton } from "./Login";
+
 export default function NavBar() {
     return (
         <nav className="navbar navbar-expand-md navbar-light bg-light">
@@ -18,10 +20,10 @@ export default function NavBar() {
                         <a className="nav-link" href="/menu">Menu builder</a>
                     </li>
                     <li className="nav-item ms-auto">
-                        <a className="nav-link" href="#">My account</a>
+                        <LoginButton></LoginButton>
                     </li>
                 </ul>
             </div>
-        </nav>
+        </nav >
     )
 }
