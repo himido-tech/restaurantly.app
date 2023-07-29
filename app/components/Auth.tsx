@@ -2,32 +2,81 @@
 import firebase from 'firebase/compat/app';
 import * as firebaseui from 'firebaseui'
 import 'firebaseui/dist/firebaseui.css'
+import { setCookie, getCookie } from 'cookies-next'
+import axios from 'axios';
+import { firebaseApp } from './helpers/firebase'
+import Modal from 'bootstrap/js/dist/modal';
+import { useAuth } from './auth/AuthProvider';
+
+const signInSuccessWithAuthResult = (authResult: firebase.auth.UserCredential, redirectUrl: string) => {
+    // As httpOnly cookies are to be used, do not persist any state client side.
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    // User successfully signed in.
+
+    const idToken = authResult.user?.getIdToken().then((value) => {
+        const data = {
+            idToken: value
+        }
+        axios.post('/api/login',
+            data,
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(function (response) {
+                // Cookie is set in the backend
+                // So after it verifies the token, it will set the cookie
+                const csrfToken = getCookie('csrfToken')
+                const session = getCookie('session')
+                console.log("Set cookie session: " + session);
+
+                Array.from(document.querySelectorAll('.modal-backdrop')).forEach(
+                    (el) => {
+                        el.remove()
+                    }
+                );
+
+                const loginModal = document.getElementById('login')
+                loginModal?.classList.add("hide")
+                loginModal?.classList.remove("fade")
+                loginModal?.classList.remove("show")
+                if (loginModal) {
+                    let modal = Modal.getInstance(loginModal)
+                    console.log('HIDE MODAL')
+                    modal?.hide()
+
+                }
+                return true
+            })
+            .catch(function (error) {
+                console.error(error);
+                return error
+            });
+        return value
+
+    }).catch((err) => {
+        console.info(err)
+        return firebase.auth().signOut();
+    })
+
+    return false
+}
 
 export default function AuthUI() {
-
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
-
-    // Your web app's Firebase configuration
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-    const firebaseConfig = {
-        apiKey: "AIzaSyCsUOr69_oYLRTTnMbiYuzrRwSRHKZmDls",
-        authDomain: "table-app-c2e68.firebaseapp.com",
-        projectId: "table-app-c2e68",
-        storageBucket: "table-app-c2e68.appspot.com",
-        messagingSenderId: "479137990961",
-        appId: "1:479137990961:web:9ccf848abde46f202fc810",
-        measurementId: "G-QB9Y910W1C"
-    };
-    const app = firebase.initializeApp(firebaseConfig)
+    const app = firebaseApp
     var ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(app.auth());
 
     // Initialize the FirebaseUI Widget using Firebase.
     ui.start('#firebaseui-auth-container', {
+        signInSuccessUrl: "/",
+        callbacks: {
+            signInSuccessWithAuthResult: signInSuccessWithAuthResult
+        },
         signInOptions: [
             {
                 provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-                signInMethod: firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD,
+                requireDisplayName: false
             },
             firebase.auth.GoogleAuthProvider.PROVIDER_ID,
             firebase.auth.FacebookAuthProvider.PROVIDER_ID,
@@ -36,9 +85,7 @@ export default function AuthUI() {
         ],
         // Other config options...
     });
-
     return (
         <div></div>
     )
 }
-

@@ -35,3 +35,6 @@ yarn-error.log*
 next-env.d.ts
 
 .vscode
+
+# firebase credential files
+firebase-admin-creds.json
