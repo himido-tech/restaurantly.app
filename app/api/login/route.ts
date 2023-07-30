@@ -1,24 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuth } from 'firebase-admin/auth';
-import { App, getApp, getApps } from 'firebase-admin/app';
 import { cookies } from 'next/headers'
-import { applicationDefault, initializeApp } from 'firebase-admin/app';
+import { adminApp } from '@/app/helpers/api/firebase';
 interface ExtendedNextRequest extends NextRequest {
     idToken: string,
     csrfToken: string,
-}
-
-
-// I don't know when those instances are spinning up, but there are cases
-// where an instance already exists. It's a good practice to use a single instance.
-var adminApp: App | null = null
-
-if (!getApps().length) {
-    adminApp = initializeApp({
-        credential: applicationDefault(),
-    })
-} else {
-    adminApp = getApp()
 }
 
 export async function POST(req: ExtendedNextRequest) {
@@ -51,8 +37,18 @@ export async function POST(req: ExtendedNextRequest) {
         // Set cookie policy for session cookie.
         const options = { maxAge: expiresIn, httpOnly: false, secure: true };
         const cookieStore = cookies()
+        const user = {
+            email: decodedIdToken.email,
+            displayName: decodedIdToken.name,
+            email_verified: decodedIdToken.email_verified,
+        } = decodedIdToken
         cookieStore.set('session', sessionCookie, options)
-        return NextResponse.json({ status: 200 })
+
+        const response = NextResponse.json({
+            uid: decodedIdToken.uid,
+            user: user,
+        })
+        return response
     }
 
     return NextResponse.json({

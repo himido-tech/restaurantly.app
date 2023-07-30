@@ -1,8 +1,7 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
-import { cookies } from 'next/headers'
-import { get } from 'http';
 import { firebaseConfig } from '@/firebase.config'
+import { getCookie } from 'cookies-next';
 // I don't know when those instances are spinning up, but there are cases
 // where an instance already exists. It's a good practice to use a single instance.
 // var firebaseApp: firebase.app.App | null = null

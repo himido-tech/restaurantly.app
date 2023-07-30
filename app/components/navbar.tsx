@@ -18,12 +18,10 @@ export default function NavBar() {
                         <a className="nav-link" href="/qr">QR</a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="/menu">Menu builder</a>
+                        <a className="nav-link" href="/dashboard/menu/1">Menu builder</a>
                     </li>
                     <li className="nav-item ms-auto">
-                        <AuthProvider>
                             <LoginButton />
-                        </AuthProvider>
                     </li>
                 </ul>
             </div>
