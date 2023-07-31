@@ -1,6 +1,6 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
-import Script from 'next/script'
+import { NextAuthProvider } from './components/auth/NextAuthProvider'
 import NavBar from './components/navbar'
 import { AuthProvider } from './components/auth/AuthProvider'
 const inter = Inter({ subsets: ['latin'] })
@@ -22,7 +22,7 @@ export default function RootLayout({
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossOrigin="anonymous"></script>
       </head>
       <body className={`${inter.className}`}>
-        <AuthProvider>
+        <NextAuthProvider>
           <div className="container">
 
             <div className="row">
@@ -33,7 +33,7 @@ export default function RootLayout({
               <div className="col">{children}</div>
             </div>
           </div>
-        </AuthProvider>
+        </NextAuthProvider>
       </body>
     </html>
   )

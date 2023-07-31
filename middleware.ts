@@ -1,6 +1,8 @@
 import { NextResponse, } from 'next/server'
 import type { NextRequest } from 'next/server'
 
+export { default } from "next-auth/middleware"
+
 export function middleware(request: NextRequest) {
     if (request.nextUrl.pathname.startsWith('/logout')) {
         const response = NextResponse.redirect(new URL("/", request.url))
@@ -8,3 +10,5 @@ export function middleware(request: NextRequest) {
         return response
     }
 }
+
+export const config = { matcher: ["/dashboard"] }

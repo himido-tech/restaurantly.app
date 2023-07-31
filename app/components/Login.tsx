@@ -1,5 +1,6 @@
 'use client'
 import dynamic from "next/dynamic";
+import { useSession, signIn, signOut } from "next-auth/react"
 import React from "react";
 import { useAuth } from "./auth/AuthProvider";
 import { firebaseAuth } from "./helpers/firebase";
@@ -13,11 +14,13 @@ const AuthUI = dynamic(
 
 export const LoginButton = () => {
     const auth = useAuth()
+    const { data: session } = useSession()
     const user = auth?.currentUser
     const loading = auth?.loading
     const initialized = auth?.initialized
     return (
         <div>
+            <button onClick={() => signIn()}>Sign in</button>
             {
                 // If user is not logged in, show the login button
                 !user ?

@@ -1,0 +1,1 @@
+Refer to https://github.com/nextauthjs/next-auth/discussions/3154
