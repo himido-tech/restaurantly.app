@@ -1,22 +1,13 @@
-// https://authjs.dev/reference/adapter/firebase#example-1
 import NextAuth from "next-auth"
-import type { NextApiRequest, NextApiResponse } from "next"
 import type { Adapter } from "next-auth/adapters";
 import { FirestoreAdapter } from "@auth/firebase-adapter";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials"
 import { getAuth } from 'firebase-admin/auth';
-import { applicationDefault } from "firebase-admin/app";
 import { adminApp } from '@/app/helpers/api/firebase'
 
 const handler = NextAuth({
     adapter: FirestoreAdapter() as Adapter,
-    // Custom pages created by us
-    pages: {
-        // signIn: '/auth/signin',
-        // signOut: '/auth/signout',
-        error: '/auth/error',
-    },
     // We've already configured providers in firebase auth, so we don't need to do it here
     providers: [
         GoogleProvider({
@@ -42,7 +33,7 @@ const handler = NextAuth({
                 // You can also use the `req` object to obtain additional parameters
                 // (i.e., the request IP address)
                 try {
-                    console.log(process.env.GOOGLE_APPLICATION_CREDENTIALS)
+                    console.log("Attempting to create user...")
                     const userRecord = adminApp && await getAuth(adminApp).createUser({
                         email: credentials?.email.toLocaleLowerCase() || '',
                         password: credentials?.password || '',
@@ -53,7 +44,7 @@ const handler = NextAuth({
                     console.log('Error creating new user:', error);
                     throw error
                 }
-                console.log("null")
+                console.log("Finished authorize function")
                 return null
             }
         })
