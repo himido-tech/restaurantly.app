@@ -1,15 +1,11 @@
 'use client'
-import { useSession, signOut } from "next-auth/react"
-import React from "react";
-import { useAuth } from "./auth/AuthProvider";
+import { useSession, signOut, signIn } from "next-auth/react"
+import React, { useState } from "react";
 import { firebaseAuth } from "./helpers/firebase";
 
 export const LoginButton = () => {
-    const auth = useAuth()
     const { data: session } = useSession()
     const user = session?.user
-    const loading = auth?.loading
-    const initialized = auth?.initialized
     return (
         <div>
             {
@@ -18,12 +14,12 @@ export const LoginButton = () => {
                     <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-backdrop="false" data-bs-target="#login" onClick={
                         () => {
                             // Managed by next-auth
-                            location.href = "/api/auth/signin"
+                            signIn()
                         }
                     }>
                         {
                             // If the auth is initialized, we show loading
-                            (loading) ? "Loading..." : "Login / Register"
+                            "Login / Register"
                         }
                     </button>
 
@@ -37,7 +33,7 @@ export const LoginButton = () => {
                             <li><a className="dropdown-item" href="#">Profile</a></li>
                             <li><a className="dropdown-item" href="#">Another action</a></li>
                             <li>
-                                <a className="dropdown-item" href="/logout">
+                                <a className="dropdown-item">
                                     <button className="btn btn-secondary" onClick={() => {
                                         signOut()
                                     }
