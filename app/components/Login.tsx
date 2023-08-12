@@ -1,16 +1,15 @@
 'use client'
 import { useSession, signOut, signIn } from "next-auth/react"
 import React, { useState } from "react";
-import { firebaseAuth } from "./helpers/firebase";
 
 export const LoginButton = () => {
-    const { data: session } = useSession()
+    const { data: session, status: sessionStatus } = useSession()
     const user = session?.user
     return (
         <div>
             {
                 // If user is not logged in, show the login button
-                !user ?
+                (sessionStatus === "unauthenticated") ?
                     <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-backdrop="false" data-bs-target="#login" onClick={
                         () => {
                             // Managed by next-auth
@@ -27,7 +26,9 @@ export const LoginButton = () => {
 
                     <div className="dropdown">
                         <button className="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            My account ({user.email})
+                            {
+                                (sessionStatus === "loading") ? "Loading..." : `My account (${user?.email})`
+                            }
                         </button>
                         <ul className="dropdown-menu">
                             <li><a className="dropdown-item" href="#">Profile</a></li>
