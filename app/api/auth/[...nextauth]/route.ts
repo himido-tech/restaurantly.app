@@ -6,13 +6,15 @@ import { FirestoreAdapter } from "@auth/firebase-adapter";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials"
 import { getAuth } from 'firebase-admin/auth';
+import { applicationDefault } from "firebase-admin/app";
+import { adminApp } from '@/app/helpers/api/firebase'
 
 const handler = NextAuth({
     adapter: FirestoreAdapter() as Adapter,
     // Custom pages created by us
     pages: {
-        signIn: '/auth/signin',
-        signOut: '/auth/signout',
+        // signIn: '/auth/signin',
+        // signOut: '/auth/signout',
         error: '/auth/error',
     },
     // We've already configured providers in firebase auth, so we don't need to do it here
@@ -29,7 +31,7 @@ const handler = NextAuth({
             // e.g. domain, username, password, 2FA token, etc.
             // You can pass any HTML attribute to the <input> tag through the object.
             credentials: {
-                username: { label: "Username", type: "text", placeholder: "your-email@example.com" },
+                email: { label: "Email", type: "text", placeholder: "your-email@example.com" },
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials, req) {
@@ -40,12 +42,13 @@ const handler = NextAuth({
                 // You can also use the `req` object to obtain additional parameters
                 // (i.e., the request IP address)
                 try {
-                    const userRecord = await getAuth().createUser({
-                        email: credentials?.username || '',
+                    console.log(process.env.GOOGLE_APPLICATION_CREDENTIALS)
+                    const userRecord = adminApp && await getAuth(adminApp).createUser({
+                        email: credentials?.email.toLocaleLowerCase() || '',
                         password: credentials?.password || '',
                     })
                     // See the UserRecord reference doc for the contents of userRecord.
-                    console.log('Successfully created new user:', userRecord.uid);
+                    console.log('Successfully created new user:', userRecord?.uid);
                 } catch (error) {
                     console.log('Error creating new user:', error);
                     throw error

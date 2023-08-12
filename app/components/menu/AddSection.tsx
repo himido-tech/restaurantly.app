@@ -4,7 +4,7 @@ import { useEffect } from "react";
 export default function NewSection() {
 
     useEffect(() => {
-        require("bootstrap/dist/js/bootstrap.bundle.min.js");
+        // require("bootstrap/dist/js/bootstrap.bundle.min.js");
     }, []);
     return (
         <div>
