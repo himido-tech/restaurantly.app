@@ -3,7 +3,7 @@ import type { Adapter } from "next-auth/adapters";
 import { FirestoreAdapter } from "@auth/firebase-adapter";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials"
-import { getAuth } from 'firebase-admin/auth';
+import { getAuth, UserRecord } from 'firebase-admin/auth';
 import { adminApp } from '@/app/helpers/api/firebase'
 
 const handler = NextAuth({
@@ -25,27 +25,45 @@ const handler = NextAuth({
                 email: { label: "Email", type: "text", placeholder: "your-email@example.com" },
                 password: { label: "Password", type: "password" }
             },
-            async authorize(credentials, req) {
+            async authorize(credentials, req): Promise<UserRecord | any> {
                 // You need to provide your own logic here that takes the credentials
                 // submitted and returns either a object representing a user or value
                 // that is false/null if the credentials are invalid.
                 // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
                 // You can also use the `req` object to obtain additional parameters
                 // (i.e., the request IP address)
+                console.log("Sanitazing inputs...")
+                const email = credentials?.email.toLocaleLowerCase() || ''
+                const password = credentials?.password || ''
+                const auth = adminApp && getAuth(adminApp)
+                console.log("Checking if the user already exists...")
                 try {
-                    console.log("Attempting to create user...")
-                    const userRecord = adminApp && await getAuth(adminApp).createUser({
-                        email: credentials?.email.toLocaleLowerCase() || '',
-                        password: credentials?.password || '',
+                    const existingUser = await auth?.getUserByEmail(email)
+
+                    console.log(`User (uid: ${existingUser?.uid}) already exists`)
+
+                    return existingUser
+
+                } catch (error: any) {
+                    if (`${error.code}` != `auth/user-not-found`) {
+                        throw error
+                    }
+                    // We can still proceed to create a new user 
+                }
+
+                console.log("Attempting to create a new user...")
+                try {
+                    const userRecord = await auth?.createUser({
+                        email: email,
+                        password: password,
                     })
                     // See the UserRecord reference doc for the contents of userRecord.
                     console.log('Successfully created new user:', userRecord?.uid);
+                    return userRecord
                 } catch (error) {
                     console.log('Error creating new user:', error);
                     throw error
                 }
-                console.log("Finished authorize function")
-                return null
             }
         })
     ],
