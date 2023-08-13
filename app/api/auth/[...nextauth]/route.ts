@@ -6,6 +6,7 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import { NextApiRequest, NextApiResponse } from "next";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { getAuth } from "firebase-admin/auth";
+import { sendEmailVerification } from "firebase/auth";
 
 const handler = (req: NextApiRequest, res: NextApiResponse) => {
 
@@ -85,7 +86,6 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
                             console.log('Successfully created new user:', userRecord.uid);
                             userDetails = userRecord
                             console.log("Sending verification email...")
-                            getAuth().generateEmailVerificationLink(email)
                         })
                         .catch((error) => {
                             console.log('Error creating new user:', error);
