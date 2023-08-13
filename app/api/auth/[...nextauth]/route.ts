@@ -1,4 +1,4 @@
-import NextAuth from "next-auth"
+import NextAuth, { JWT, Session } from "next-auth"
 import type { Adapter, AdapterUser } from "next-auth/adapters";
 import { FirestoreAdapter } from "@next-auth/firebase-adapter";
 import GoogleProvider from "next-auth/providers/google";
@@ -15,6 +15,23 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
     return NextAuth(req, res, {
         adapter: fireStoreAdapter as Adapter,
         // This config makes it possible to be applied  for regular credentials and external providers.
+        callbacks: {
+            async session({ session, token }: { session: Session, token: JWT, user: AdapterUser }) {
+                console.log("Token: " + JSON.stringify(token))
+                console.log("Session User: " + JSON.stringify(session.user))
+                session.user = token.user
+                return session
+            },
+            async jwt({ token, account, profile, user }) {
+                // Persist the OAuth access_token and or the user id to the token right after signin
+                console.log("JWT USER: " + JSON.stringify(user))
+                console.log("JWT Token: " + JSON.stringify(token))
+                console.log("JWT Account: " + JSON.stringify(account))
+                console.log("JWT Profile: " + JSON.stringify(profile))
+                user && (token.user = user)
+                return token
+            }
+        },
         session: {
             // Choose how you want to save the user session.
             // The default is `"jwt"`, an encrypted JWT (JWE) stored in the session cookie.
@@ -75,7 +92,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
                     console.log("Attempting to create a new user...")
                     // FirestoreAdapter already instantiates a firebase app, so we can use it to create a new 
 
-                    var userDetails: UserRecord | null = null
+                    var userDetails = null
                     await getAuth()
                         .createUser({
                             email: email,
@@ -84,13 +101,21 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
                         .then((userRecord) => {
                             // See the UserRecord reference doc for the contents of userRecord.
                             console.log('Successfully created new user:', userRecord.uid);
-                            userDetails = userRecord
+                            userDetails = {
+                                id: userRecord.uid,
+                                name: userRecord.displayName,
+                                email: userRecord.email,
+                                picture: userRecord.photoURL,
+                                emailVerified: userRecord.emailVerified,
+                            }
                             console.log("Sending verification email...")
+                            return userRecord
                         })
                         .catch((error) => {
                             console.log('Error creating new user:', error);
                             throw error
                         });
+                    console.log("User details: " + JSON.stringify(userDetails))
                     return userDetails
                 }
             })
