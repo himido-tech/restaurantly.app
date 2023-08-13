@@ -1,9 +1,10 @@
 'use client'
+import { Session } from "next-auth";
 import { useSession, signOut, signIn } from "next-auth/react"
 import React from "react";
 
 export const LoginButton = () => {
-    const { data: session, status: sessionStatus } = useSession()
+    const { data: session, status: sessionStatus }: { data: Session | null, status: string } = useSession();
     const user = session?.user
     console.log(user)
     return (
