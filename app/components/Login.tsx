@@ -1,6 +1,6 @@
 'use client'
 import { useSession, signOut, signIn } from "next-auth/react"
-import React, { useState } from "react";
+import React from "react";
 
 export const LoginButton = () => {
     const { data: session, status: sessionStatus } = useSession()
@@ -37,7 +37,9 @@ export const LoginButton = () => {
                             <li>
                                 <a className="dropdown-item">
                                     <button className="btn btn-secondary" onClick={() => {
-                                        signOut()
+                                        signOut({
+                                            callbackUrl: "/"
+                                        })
                                     }
                                     }>
                                         Logout

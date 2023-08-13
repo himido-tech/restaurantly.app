@@ -1,5 +1,4 @@
 import { LoginButton } from "./Login";
-import { AuthProvider } from "./auth/AuthProvider";
 
 export default function NavBar() {
     return (
@@ -21,7 +20,7 @@ export default function NavBar() {
                         <a className="nav-link" href="/dashboard/menu/1">Menu builder</a>
                     </li>
                     <li className="nav-item ms-auto">
-                            <LoginButton />
+                        <LoginButton />
                     </li>
                 </ul>
             </div>

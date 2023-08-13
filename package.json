@@ -28,7 +28,6 @@
     "feather-icons-react": "^0.6.2",
     "firebase": "^9.0.0",
     "firebase-admin": "^11.10.1",
-    "firebaseui": "^0.600.0",
     "next": "13.4.7",
     "next-auth": "^4.22.3",
     "react": "18.2.0",
