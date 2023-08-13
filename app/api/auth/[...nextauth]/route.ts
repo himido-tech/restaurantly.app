@@ -5,6 +5,7 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials"
 import { NextApiRequest, NextApiResponse } from "next";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
+import { getAuth } from "firebase-admin/auth";
 
 const handler = (req: NextApiRequest, res: NextApiResponse) => {
 
@@ -56,45 +57,41 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
                     const password = credentials?.password || ''
                     console.log("Checking if the user already exists...")
                     try {
-                        var existingUser: AdapterUser | null = null
-                        if (fireStoreAdapter.getUserByEmail) {
-                            existingUser = await fireStoreAdapter.getUserByEmail(email)
-                        }
 
+                        const existingUser: UserRecord = await getAuth().getUserByEmail(email)
                         if (existingUser) {
-                            console.log(`User (id: ${existingUser?.id}) already exists`)
+                            console.log(`User (id: ${existingUser?.uid}) already exists`)
                             return existingUser
                         }
-
-
                     } catch (error: any) {
-                        if (`${error.code}` != `auth/user-not-found`) {
+                        if (`${error.code}` != `auth/email-already-exists`) {
                             throw error
                         }
                         // We can still proceed to create a new user 
                     }
 
                     console.log("Attempting to create a new user...")
-                    try {
-                        var userRecord = null
+                    // FirestoreAdapter already instantiates a firebase app, so we can use it to create a new 
+                    var userDetails = null
+                    await getAuth()
+                        .createUser({
+                            email: email,
+                            password: password,
+                        })
+                        .then((userRecord) => {
+                            // See the UserRecord reference doc for the contents of userRecord.
+                            console.log('Successfully created new user:', userRecord.uid);
+                            userDetails = {
+                                id: userRecord.uid,
+                                email: userRecord.email,
+                            }
+                        })
+                        .catch((error) => {
+                            console.log('Error creating new user:', error);
+                            throw error
+                        });
 
-                        if (fireStoreAdapter.createUser) {
-                            userRecord = await fireStoreAdapter.createUser({
-                                email: email,
-                                emailVerified: null,
-                            })
-                        }
-                        // See the UserRecord reference doc for the contents of userRecord.
-                        console.log('Successfully created new user:', userRecord?.id);
-                        return {
-                            id: userRecord?.id,
-                            name: userRecord?.email,
-                            email: userRecord?.email,
-                        }
-                    } catch (error) {
-                        console.log('Error creating new user:', error);
-                        throw error
-                    }
+                    return userDetails
                 }
             })
         ],
