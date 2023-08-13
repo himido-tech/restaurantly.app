@@ -64,7 +64,8 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
                             return existingUser
                         }
                     } catch (error: any) {
-                        if (`${error.code}` != `auth/email-already-exists`) {
+                        console.log(error.code)
+                        if (`${error.code}` != `auth/user-not-found`) {
                             throw error
                         }
                         // We can still proceed to create a new user 
@@ -72,7 +73,8 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
 
                     console.log("Attempting to create a new user...")
                     // FirestoreAdapter already instantiates a firebase app, so we can use it to create a new 
-                    var userDetails = null
+
+                    var userDetails: UserRecord | null = null
                     await getAuth()
                         .createUser({
                             email: email,
@@ -81,16 +83,14 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
                         .then((userRecord) => {
                             // See the UserRecord reference doc for the contents of userRecord.
                             console.log('Successfully created new user:', userRecord.uid);
-                            userDetails = {
-                                id: userRecord.uid,
-                                email: userRecord.email,
-                            }
+                            userDetails = userRecord
+                            console.log("Sending verification email...")
+                            getAuth().generateEmailVerificationLink(email)
                         })
                         .catch((error) => {
                             console.log('Error creating new user:', error);
                             throw error
                         });
-
                     return userDetails
                 }
             })
