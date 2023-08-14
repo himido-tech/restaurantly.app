@@ -1,28 +1,38 @@
-import NextAuth, { Session, User } from "next-auth"
+import NextAuth, { Account, Profile, Session, User } from "next-auth"
 import type { Adapter } from "next-auth/adapters";
 import { FirestoreAdapter } from "@next-auth/firebase-adapter";
-import GoogleProvider from "next-auth/providers/google";
+import GoogleProvider, { GoogleProfile } from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials"
 import { NextApiRequest, NextApiResponse } from "next";
 import { UserRecord, getAuth } from "firebase-admin/auth";
 import { JWT } from "next-auth/jwt";
 
 const handler = (req: NextApiRequest, res: NextApiResponse) => {
-
     // Creates a new instance of the adapter you configured
     const fireStoreAdapter = FirestoreAdapter()
     return NextAuth(req, res, {
         adapter: fireStoreAdapter as Adapter,
         // This config makes it possible to be applied  for regular credentials and external providers.
         callbacks: {
-            async session({ session, token }: { session: Session, token: JWT }) {
+            async session({ session, token }: { session: Session, token: JWT }): Promise<Session> {
                 console.log("Token: " + JSON.stringify(token))
                 console.log("Session User: " + JSON.stringify(session.user))
                 session.user = token.user
-                return session
+                return Promise.resolve(session)
             },
-            async jwt({ token, user }: { token: JWT, user: any }) {
-                user && (token.user = user)
+            // If we sign-in the user and profile will be available only once. But, in subsequent calls, only token will be available.
+            async jwt({ token, user, profile, account }: { token: JWT, user: any, profile?: any, account?: Account | null }) {
+                console.log("PRofile:" + JSON.stringify(profile))
+                console.log("ACCOUNT:" + JSON.stringify(account))
+                console.log("TOKEN :" + JSON.stringify(token))
+                console.log("USER :" + JSON.stringify(user))
+                if (user) {
+                    if (account?.provider === "google") {
+                        // Google provider returns a profile object which tells us if the email is verified or not.
+                        user.emailVerified = profile?.email_verified
+                    }
+                    token.user = user
+                }
                 return token
             }
         },
