@@ -7,6 +7,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { UserRecord, getAuth } from "firebase-admin/auth";
 import { JWT } from "next-auth/jwt";
 
+type Mutable<T> = {
+    -readonly [P in keyof T]: T[P];
+};
+
 const handler = (req: NextApiRequest, res: NextApiResponse) => {
     // Creates a new instance of the adapter you configured
     const fireStoreAdapter = FirestoreAdapter()
@@ -25,11 +29,13 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
                 console.log("PRofile:" + JSON.stringify(profile))
                 console.log("ACCOUNT:" + JSON.stringify(account))
                 console.log("TOKEN :" + JSON.stringify(token))
-                console.log("USER :" + JSON.stringify(user))
+                console.log("USER :" + JSON.stringify(user as UserRecord))
                 if (user) {
                     if (account?.provider === "google") {
                         // Google provider returns a profile object which tells us if the email is verified or not.
-                        user.emailVerified = profile?.email_verified
+                        const googleUser: Mutable<UserRecord> = user
+                        const googleProfile: GoogleProfile = profile
+                        googleUser.emailVerified = googleProfile.email_verified
                     }
                     token.user = user
                 }
