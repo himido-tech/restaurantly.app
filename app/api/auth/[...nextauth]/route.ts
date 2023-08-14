@@ -26,18 +26,17 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
             },
             // If we sign-in the user and profile will be available only once. But, in subsequent calls, only token will be available.
             async jwt({ token, user, profile, account }: { token: JWT, user: any, profile?: any, account?: Account | null }) {
-                console.log("PRofile:" + JSON.stringify(profile))
-                console.log("ACCOUNT:" + JSON.stringify(account))
-                console.log("TOKEN :" + JSON.stringify(token))
-                console.log("USER :" + JSON.stringify(user as UserRecord))
                 if (user) {
+                    var tokenUser = token.user
                     if (account?.provider === "google") {
                         // Google provider returns a profile object which tells us if the email is verified or not.
+                        // UserRecord contains readonly properties, so we need to cast it to a mutable type in order to set the emailVerified property.
                         const googleUser: Mutable<UserRecord> = user
                         const googleProfile: GoogleProfile = profile
                         googleUser.emailVerified = googleProfile.email_verified
+                        tokenUser = googleUser
                     }
-                    token.user = user
+                    token.user = tokenUser
                 }
                 return token
             }
