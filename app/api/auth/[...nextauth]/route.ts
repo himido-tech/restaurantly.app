@@ -19,13 +19,11 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
         // This config makes it possible to be applied  for regular credentials and external providers.
         callbacks: {
             async session({ session, token }: { session: Session, token: JWT }): Promise<Session> {
-                console.log("Token: " + JSON.stringify(token))
-                console.log("Session User: " + JSON.stringify(session.user))
                 session.user = token.user
                 return Promise.resolve(session)
             },
             // If we sign-in the user and profile will be available only once. But, in subsequent calls, only token will be available.
-            async jwt({ token, user, profile, account }: { token: JWT, user: any, profile?: any, account?: Account | null }) {
+            async jwt({ token, user, profile, account }: { token: JWT, user: any, profile?: any, account?: Account | null }): Promise<JWT> {
                 if (user) {
                     var tokenUser = token.user
                     if (account?.provider === "google") {
@@ -38,7 +36,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
                     }
                     token.user = tokenUser
                 }
-                return token
+                return Promise.resolve(token)
             }
         },
         session: {
