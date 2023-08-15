@@ -13,4 +13,4 @@ if (!getApps().length) {
 }
 
 // This is firebase admin sdk instance which is wrapped in a next-auth adapter
-export const fireStoreAdapter = FirestoreAdapter(adminApp) as Adapter
+export const FireStoreAdminAdapter = FirestoreAdapter(adminApp) as Adapter

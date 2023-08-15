@@ -5,7 +5,7 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import { NextApiRequest, NextApiResponse } from "next";
 import { UserRecord, getAuth } from "firebase-admin/auth";
 import { JWT } from "next-auth/jwt";
-import { fireStoreAdapter } from "@/app/helpers/firebaseAdmin";
+import { FireStoreAdminAdapter } from "@/app/helpers/firebase";
 
 // This type allows making readonly properties writable.
 type Mutable<T> = {
@@ -14,7 +14,7 @@ type Mutable<T> = {
 
 const handler = (req: NextApiRequest, res: NextApiResponse) => {
     return NextAuth(req, res, {
-        adapter: fireStoreAdapter,
+        adapter: FireStoreAdminAdapter,
         // This config makes it possible to be applied  for regular credentials and external providers.
         callbacks: {
             async session({ session, token }: { session: Session, token: JWT }): Promise<Session> {
