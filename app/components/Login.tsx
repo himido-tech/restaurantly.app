@@ -6,7 +6,6 @@ import React from "react";
 export const LoginButton = () => {
     const { data: session, status: sessionStatus }: { data: Session | null, status: string } = useSession();
     const user = session?.user
-    console.log(user)
     return (
         <div>
             {
