@@ -1,19 +1,18 @@
 import NextAuth, { Account, Profile, Session, User } from "next-auth"
 import type { Adapter } from "next-auth/adapters";
-import { FirestoreAdapter } from "@next-auth/firebase-adapter";
 import GoogleProvider, { GoogleProfile } from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials"
 import { NextApiRequest, NextApiResponse } from "next";
 import { UserRecord, getAuth } from "firebase-admin/auth";
 import { JWT } from "next-auth/jwt";
+import { fireStoreAdapter } from "@/app/helpers/firebaseAdmin";
 
+// This type allows making readonly properties writable.
 type Mutable<T> = {
     -readonly [P in keyof T]: T[P];
 };
 
 const handler = (req: NextApiRequest, res: NextApiResponse) => {
-    // Creates a new instance of the adapter you configured
-    const fireStoreAdapter = FirestoreAdapter()
     return NextAuth(req, res, {
         adapter: fireStoreAdapter as Adapter,
         // This config makes it possible to be applied  for regular credentials and external providers.
