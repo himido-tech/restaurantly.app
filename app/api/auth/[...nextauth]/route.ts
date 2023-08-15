@@ -14,7 +14,7 @@ type Mutable<T> = {
 
 const handler = (req: NextApiRequest, res: NextApiResponse) => {
     return NextAuth(req, res, {
-        adapter: fireStoreAdapter as Adapter,
+        adapter: fireStoreAdapter,
         // This config makes it possible to be applied  for regular credentials and external providers.
         callbacks: {
             async session({ session, token }: { session: Session, token: JWT }): Promise<Session> {
