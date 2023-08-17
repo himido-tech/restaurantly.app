@@ -2,7 +2,7 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import ScriptLoader from 'next/script'
 import { NextAuthProvider } from './components/auth/NextAuthProvider'
-import NavBar from './components/navbar'
+import ResponsiveAppBar from './components/navbar'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
@@ -17,17 +17,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <link as="style" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="preload stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossOrigin="anonymous" />
-        <ScriptLoader src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossOrigin="anonymous" />
-      </head>
       <body className={`${inter.className}`}>
         <NextAuthProvider>
           <div className="container">
 
             <div className="row">
               <div className="col"></div>
-              <NavBar />
+              <ResponsiveAppBar />
             </div>
             <div className="row">
               <div className="col">{children}</div>
