@@ -2,7 +2,7 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import ScriptLoader from 'next/script'
 import { NextAuthProvider } from './components/auth/NextAuthProvider'
-import ResponsiveAppBar from './components/navbar'
+import PrimarySearchAppBar from './components/navbar'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
@@ -23,7 +23,7 @@ export default function RootLayout({
 
             <div className="row">
               <div className="col"></div>
-              <ResponsiveAppBar />
+              <PrimarySearchAppBar />
             </div>
             <div className="row">
               <div className="col">{children}</div>
