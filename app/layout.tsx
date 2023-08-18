@@ -1,6 +1,5 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
-import ScriptLoader from 'next/script'
 import { NextAuthProvider } from './components/auth/NextAuthProvider'
 import PrimarySearchAppBar from './components/navbar'
 const inter = Inter({ subsets: ['latin'] })
