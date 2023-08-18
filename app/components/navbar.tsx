@@ -214,7 +214,7 @@ export default function PrimarySearchAppBar() {
             />
           </Search>
           <Box sx={{ flexGrow: 1 }} />
-          {!user ? LoginButton :
+          {(sessionStatus === "unauthenticated") ? LoginButton :
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
               <IconButton size="large" aria-label="show 4 new mails" color="inherit">
                 <Badge badgeContent={4} color="error">
@@ -257,7 +257,9 @@ export default function PrimarySearchAppBar() {
           </Box>
         </Toolbar>
       </AppBar>
-      {user ? renderMobileMenu : null}
+      {
+        (sessionStatus === "unauthenticated") ? null : renderMobileMenu
+      }
       {renderMenu}
     </Box>
   );
