@@ -20,6 +20,7 @@ import { signIn, signOut, useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
 import Button from '@mui/material/Button';
 import { teal } from '@mui/material/colors';
+import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -212,6 +213,7 @@ export default function PrimarySearchAppBar() {
               inputProps={{ 'aria-label': 'search' }}
             />
           </Search>
+
           <Box sx={{ flexGrow: 1 }} />
           {(sessionStatus === "unauthenticated") ? LoginButton :
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
