@@ -2,6 +2,7 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import { NextAuthProvider } from './components/auth/NextAuthProvider'
 import PrimarySearchAppBar from './components/navbar'
+import Container from '@mui/material/Container'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
@@ -17,18 +18,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className}`}>
-        <NextAuthProvider>
-          <div className="container">
-
-            <div className="row">
-              <div className="col"></div>
-              <PrimarySearchAppBar />
-            </div>
-            <div className="row">
-              <div className="col">{children}</div>
-            </div>
-          </div>
-        </NextAuthProvider>
+        <Container maxWidth={false} disableGutters>
+          <NextAuthProvider>
+            <PrimarySearchAppBar />
+            {children}
+          </NextAuthProvider>
+        </Container>
       </body>
     </html>
   )
