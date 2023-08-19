@@ -177,9 +177,10 @@ export default function PrimarySearchAppBar() {
 
   // LoginButton redirects to next-auth login page.
   // https://mui.com/material-ui/react-button/#color
+  // Redirects user to the login page. 
   const LoginButton = (
     <ThemeProvider theme={StyleLoginButtonTheme}>
-      <Button onClick={() => signIn()} variant="contained" color='primary'>
+      <Button onClick={() => signIn(undefined, { callbackUrl: '/dashboard' })} variant="contained" color='primary'>
         Login / Register
       </Button>
     </ThemeProvider>
@@ -190,12 +191,12 @@ export default function PrimarySearchAppBar() {
       <AppBar position="static">
         <Toolbar >
 
-          <Grid container spacing={1}>
-            <Grid item alignItems={'baseline'}>
+          <Grid container>
+            <Grid item>
               <Item>
                 <IconButton
                   size="large"
-                  // edge="start"
+                  edge="start"
                   color="inherit"
                   aria-label="open drawer"
                 >
@@ -204,10 +205,6 @@ export default function PrimarySearchAppBar() {
               </Item>
             </Grid>
             <Grid item>
-            </Grid>
-            <Grid item xs={4}>
-            </Grid>
-            <Grid item xs={3}>
               <Search>
                 <SearchIconWrapper>
                   <SearchIcon />
@@ -218,52 +215,39 @@ export default function PrimarySearchAppBar() {
                 />
               </Search>
             </Grid>
+            <Grid item>
+              <Box sx={{ flexGrow: 1 }} />
+              {(sessionStatus === "unauthenticated") ? LoginButton :
+                <Box sx={{ display: { xs: 'flex', md: 'flex' } }}>
+                  <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+                    <Badge badgeContent={4} color="error">
+                      <MailIcon />
+                    </Badge>
+                  </IconButton>
+                  <IconButton
+                    size="large"
+                    aria-label="show 17 new notifications"
+                    color="inherit"
+                  >
+                    <Badge badgeContent={17} color="error">
+                      <NotificationsIcon />
+                    </Badge>
+                  </IconButton>
+                  <IconButton
+                    size="large"
+                    edge="end"
+                    aria-label="account of current user"
+                    aria-controls={menuId}
+                    aria-haspopup="true"
+                    onClick={handleProfileMenuOpen}
+                    color="inherit"
+                  >
+                    <AccountCircle />
+                  </IconButton>
+                </Box>
+              }
+            </Grid>
           </Grid>
-
-
-
-          <Box sx={{ flexGrow: 1 }} />
-          {(sessionStatus === "unauthenticated") ? LoginButton :
-            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                <Badge badgeContent={4} color="error">
-                  <MailIcon />
-                </Badge>
-              </IconButton>
-              <IconButton
-                size="large"
-                aria-label="show 17 new notifications"
-                color="inherit"
-              >
-                <Badge badgeContent={17} color="error">
-                  <NotificationsIcon />
-                </Badge>
-              </IconButton>
-              <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
-            </Box>
-          }
-          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
-          </Box>
         </Toolbar>
       </AppBar>
       {
