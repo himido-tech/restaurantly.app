@@ -190,12 +190,11 @@ export default function PrimarySearchAppBar() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar >
-
           <Grid container>
             <Grid item>
               <Item>
                 <IconButton
-                  size="large"
+                  size="medium"
                   edge="start"
                   color="inherit"
                   aria-label="open drawer"
@@ -204,48 +203,56 @@ export default function PrimarySearchAppBar() {
                 </IconButton>
               </Item>
             </Grid>
-            <Grid item>
-              <Search>
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder="Search…"
-                  inputProps={{ 'aria-label': 'search' }}
-                />
-              </Search>
+            <Grid
+              item m={1}
+              // Auto-size the search bar to fill the remaining space.
+              xs
+              position={'relative'}
+            >
+              <Item>
+                <Search>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
+                  <StyledInputBase
+                    placeholder="Search…"
+                    inputProps={{ 'aria-label': 'search' }}
+                  />
+                </Search>
+              </Item>
             </Grid>
-            <Grid item>
-              <Box sx={{ flexGrow: 1 }} />
-              {(sessionStatus === "unauthenticated") ? LoginButton :
-                <Box sx={{ display: { xs: 'flex', md: 'flex' } }}>
-                  <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                    <Badge badgeContent={4} color="error">
-                      <MailIcon />
-                    </Badge>
-                  </IconButton>
-                  <IconButton
-                    size="large"
-                    aria-label="show 17 new notifications"
-                    color="inherit"
-                  >
-                    <Badge badgeContent={17} color="error">
-                      <NotificationsIcon />
-                    </Badge>
-                  </IconButton>
-                  <IconButton
-                    size="large"
-                    edge="end"
-                    aria-label="account of current user"
-                    aria-controls={menuId}
-                    aria-haspopup="true"
-                    onClick={handleProfileMenuOpen}
-                    color="inherit"
-                  >
-                    <AccountCircle />
-                  </IconButton>
-                </Box>
-              }
+            <Grid item xs>
+              <Grid container direction="row-reverse">
+                {(sessionStatus === "unauthenticated") ? LoginButton :
+                  <Box sx={{ display: { xs: 'flex', md: 'flex' } }}>
+                    <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+                      <Badge badgeContent={4} color="error">
+                        <MailIcon />
+                      </Badge>
+                    </IconButton>
+                    <IconButton
+                      size="large"
+                      aria-label="show 17 new notifications"
+                      color="inherit"
+                    >
+                      <Badge badgeContent={17} color="error">
+                        <NotificationsIcon />
+                      </Badge>
+                    </IconButton>
+                    <IconButton
+                      size="large"
+                      edge="end"
+                      aria-label="account of current user"
+                      aria-controls={menuId}
+                      aria-haspopup="true"
+                      onClick={handleProfileMenuOpen}
+                      color="inherit"
+                    >
+                      <AccountCircle />
+                    </IconButton>
+                  </Box>
+                }
+              </Grid>
             </Grid>
           </Grid>
         </Toolbar>
