@@ -1,28 +1,40 @@
 'use client'
+
 import * as React from 'react';
-import { styled, alpha, createTheme, ThemeProvider } from '@mui/material/styles';
-import AppBar from '@mui/material/AppBar';
+import { styled, useTheme, ThemeProvider, alpha, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import Drawer from '@mui/material/Drawer';
+import CssBaseline from '@mui/material/CssBaseline';
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
-import InputBase from '@mui/material/InputBase';
-import Badge from '@mui/material/Badge';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import MailIcon from '@mui/icons-material/Mail';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import MoreIcon from '@mui/icons-material/MoreVert';
-import { signIn, signOut, useSession } from 'next-auth/react';
-import { Session } from 'next-auth';
 import Button from '@mui/material/Button';
-import { teal } from '@mui/material/colors';
-import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import MailIcon from '@mui/icons-material/Mail';
 import Grid from '@mui/material/Grid';
 import Item from '@mui/material/Grid';
+import SearchIcon from '@mui/icons-material/Search';
+import InputBase from '@mui/material/InputBase';
+import { AccountCircle } from '@mui/icons-material';
+import { Badge } from '@mui/material';
+import { teal } from '@mui/material/colors';
+import { Session } from 'next-auth';
+import { signIn, signOut, useSession } from 'next-auth/react';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import MenuItem from '@mui/material/MenuItem';
+import Menu from '@mui/material/Menu';
+
+const drawerWidth = 240;
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -64,6 +76,55 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
+  open?: boolean;
+}>(({ theme, open }) => ({
+  flexGrow: 1,
+  padding: theme.spacing(3),
+  transition: theme.transitions.create('margin', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  marginLeft: `-${drawerWidth}px`,
+  ...(open && {
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    marginLeft: 0,
+  }),
+}));
+
+interface AppBarProps extends MuiAppBarProps {
+  open?: boolean;
+}
+
+const AppBar = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== 'open',
+})<AppBarProps>(({ theme, open }) => ({
+  transition: theme.transitions.create(['margin', 'width'], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  ...(open && {
+    width: `calc(100% - ${drawerWidth}px)`,
+    marginLeft: `${drawerWidth}px`,
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  }),
+}));
+
+const DrawerHeader = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+  justifyContent: 'flex-end',
+}));
+
 // https://mui.com/material-ui/customization/palette/#customization
 const StyleLoginButtonTheme = createTheme({
   palette: {
@@ -71,16 +132,28 @@ const StyleLoginButtonTheme = createTheme({
   },
 });
 
+// LoginButton redirects to next-auth login page.
+// https://mui.com/material-ui/react-button/#color
+// Redirects user to the login page. 
+const LoginButton = (
+  <ThemeProvider theme={StyleLoginButtonTheme}>
+    <Button onClick={() => signIn(undefined, { callbackUrl: '/dashboard' })} variant="contained" color='primary'>
+      Login / Register
+    </Button>
+  </ThemeProvider>
+);
 
-
-export default function PrimarySearchAppBar() {
+export default function PersistentDrawerLeft({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   // Get user session
   const { data: session, status: sessionStatus }: { data: Session | null, status: string } = useSession();
   const user = session?.user
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
-    React.useState<null | HTMLElement>(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -93,14 +166,15 @@ export default function PrimarySearchAppBar() {
     setMobileMoreAnchorEl(null);
   };
 
-  const handleMenuClose = () => {
-    signOut();
+  const handleMenuClose = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(null);
+    handleMobileMenuClose();
   };
 
-  const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setMobileMoreAnchorEl(event.currentTarget);
+  const handleLogout = () => {
+    signOut()
   };
-
+  // Account menu (desktop)
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
@@ -119,10 +193,11 @@ export default function PrimarySearchAppBar() {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+      <MenuItem onClick={handleLogout}>Logout</MenuItem>
     </Menu>
   );
 
+  // Account menu (mobile)
   const mobileMenuId = 'primary-search-account-menu-mobile';
   const renderMobileMenu = (
     <Menu
@@ -170,34 +245,35 @@ export default function PrimarySearchAppBar() {
         >
           <AccountCircle />
         </IconButton>
-        <p>Profile</p>
       </MenuItem>
     </Menu>
   );
 
-  // LoginButton redirects to next-auth login page.
-  // https://mui.com/material-ui/react-button/#color
-  // Redirects user to the login page. 
-  const LoginButton = (
-    <ThemeProvider theme={StyleLoginButtonTheme}>
-      <Button onClick={() => signIn(undefined, { callbackUrl: '/dashboard' })} variant="contained" color='primary'>
-        Login / Register
-      </Button>
-    </ThemeProvider>
-  );
+  const theme = useTheme();
+  const [open, setOpen] = React.useState(false);
+
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar >
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar position="fixed" open={open}>
+        <Toolbar>
           <Grid container>
             <Grid item>
               <Item>
                 <IconButton
-                  size="medium"
-                  edge="start"
                   color="inherit"
                   aria-label="open drawer"
+                  onClick={handleDrawerOpen}
+                  edge="start"
+                  sx={{ mr: 2, ...(open && { display: 'none' }) }}
                 >
                   <MenuIcon />
                 </IconButton>
@@ -257,10 +333,59 @@ export default function PrimarySearchAppBar() {
           </Grid>
         </Toolbar>
       </AppBar>
-      {
-        (sessionStatus === "unauthenticated") ? null : renderMobileMenu
-      }
-      {renderMenu}
+      <Drawer
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+          },
+        }}
+        variant="persistent"
+        anchor="left"
+        open={open}
+      >
+        <DrawerHeader>
+          <IconButton onClick={handleDrawerClose}>
+            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+          </IconButton>
+        </DrawerHeader>
+        <Divider />
+        <List>
+          {['Menu Builder', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+        <List>
+          {['All mail', 'Trash', 'Spam'].map((text, index) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Drawer>
+      <Main open={open}>
+        <DrawerHeader />
+        {children}
+        {
+          (sessionStatus === "unauthenticated") ? null : renderMobileMenu
+        }
+        {renderMenu}
+      </Main>
     </Box >
   );
 }

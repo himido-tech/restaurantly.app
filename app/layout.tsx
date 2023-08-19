@@ -1,8 +1,8 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
 import { NextAuthProvider } from './components/auth/NextAuthProvider'
-import PrimarySearchAppBar from './components/navbar'
 import Container from '@mui/material/Container'
+import PersistentDrawerLeft from './components/navbar'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
@@ -20,8 +20,9 @@ export default function RootLayout({
       <body className={`${inter.className}`}>
         <Container maxWidth={false} disableGutters>
           <NextAuthProvider>
-            <PrimarySearchAppBar />
-            {children}
+            <PersistentDrawerLeft>
+              {children}
+            </PersistentDrawerLeft>
           </NextAuthProvider>
         </Container>
       </body>
