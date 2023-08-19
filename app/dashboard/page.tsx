@@ -16,7 +16,7 @@ export default function Dashboard() {
             </Box>
           </Item>
           <Item>
-            <Box m={4}>
+            <Box m={2}>
               Menu Builder
             </Box>
           </Item>
