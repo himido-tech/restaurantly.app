@@ -1,6 +1,5 @@
 'use client'
 
-import * as React from 'react';
 import { styled, useTheme, ThemeProvider, alpha, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -32,6 +31,7 @@ import { signIn, signOut, useSession } from 'next-auth/react';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
+import { useEffect, useState } from 'react';
 
 const drawerWidth = 240;
 
@@ -151,8 +151,8 @@ export default function PersistentDrawerLeft({
   const { data: session, status: sessionStatus }: { data: Session | null, status: string } = useSession();
   const user = session?.user
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -249,18 +249,29 @@ export default function PersistentDrawerLeft({
   );
 
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  // Open drawer if user is authenticated. 
+  const [open, setOpen] = useState(false)
+  const [close, setClose] = useState(false)
 
+  console.log(sessionStatus)
+  console.log(user)
+  useEffect(() => {
+    if (!close && sessionStatus === 'authenticated' && user) {
+      setOpen(true)
+      return
+    }
+  })
   const handleDrawerOpen = () => {
     sessionStatus === 'authenticated' && setOpen(true);
   };
 
   const handleDrawerClose = () => {
     setOpen(false);
+    setClose(true);
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    (sessionStatus === 'loading') ? <div>Loading...</div> : <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar>
