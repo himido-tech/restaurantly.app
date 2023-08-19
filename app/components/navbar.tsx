@@ -21,6 +21,8 @@ import { Session } from 'next-auth';
 import Button from '@mui/material/Button';
 import { teal } from '@mui/material/colors';
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
+import Grid from '@mui/material/Grid';
+import Item from '@mui/material/Grid';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -186,33 +188,39 @@ export default function PrimarySearchAppBar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
-          >
-            <a href='/'>Restaurantly</a>
-          </Typography>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
+        <Toolbar >
+
+          <Grid container spacing={1}>
+            <Grid item alignItems={'baseline'}>
+              <Item>
+                <IconButton
+                  size="large"
+                  // edge="start"
+                  color="inherit"
+                  aria-label="open drawer"
+                >
+                  <MenuIcon />
+                </IconButton>
+              </Item>
+            </Grid>
+            <Grid item>
+            </Grid>
+            <Grid item xs={4}>
+            </Grid>
+            <Grid item xs={3}>
+              <Search>
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  placeholder="Search…"
+                  inputProps={{ 'aria-label': 'search' }}
+                />
+              </Search>
+            </Grid>
+          </Grid>
+
+
 
           <Box sx={{ flexGrow: 1 }} />
           {(sessionStatus === "unauthenticated") ? LoginButton :
@@ -262,6 +270,6 @@ export default function PrimarySearchAppBar() {
         (sessionStatus === "unauthenticated") ? null : renderMobileMenu
       }
       {renderMenu}
-    </Box>
+    </Box >
   );
 }
