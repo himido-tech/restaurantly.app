@@ -32,6 +32,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { useEffect, useState } from 'react';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const drawerWidth = 240;
 
@@ -252,11 +253,11 @@ export default function PersistentDrawerLeft({
   // Open drawer if user is authenticated. 
   const [open, setOpen] = useState(false)
   const [close, setClose] = useState(false)
+  const matchesSM = useMediaQuery(theme.breakpoints.down('sm'));
 
-  console.log(sessionStatus)
-  console.log(user)
   useEffect(() => {
-    if (!close && sessionStatus === 'authenticated' && user) {
+    // Open drawer for authneticated users, disable for mobile.
+    if (!matchesSM && !close && sessionStatus === 'authenticated' && user) {
       setOpen(true)
       return
     }
